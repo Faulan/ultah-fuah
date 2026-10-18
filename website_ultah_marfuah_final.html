@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 21st Birthday Marfuah Rahmawati 💖</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Quicksand:wght@400;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- Tone.js for audio synth -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pinkSoft: '#fff0f3',
+                        pinkCute: '#ffccd5',
+                        pinkMain: '#ff8fa3',
+                        pinkDark: '#ff4d6d',
+                        purpleSoft: '#fae8ff',
+                        purpleMain: '#c026d3',
+                        textDark: '#4a044e'
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                        cute: ['Fredoka', 'sans-serif'],
+                        cursive: ['Pacifico', 'cursive']
+                    },
+                    animation: {
+                        'float': 'floatSlow 4s ease-in-out infinite',
+                        'fly-up': 'flyUp 8s ease-in-out forwards',
+                        'bounce-slow': 'bounce 3s infinite',
+                        'wiggle': 'wiggle 1s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        floatSlow: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-12px) rotate(2deg)' }
+                        },
+                        flyUp: {
+                            '0%': { transform: 'translateY(100vh) scale(0.8)', opacity: '0' },
+                            '10%': { opacity: '1' },
+                            '90%': { opacity: '1' },
+                            '100%': { transform: 'translateY(-150vh) scale(1.1) rotate(5deg)', opacity: '0' },
+                        },
+                        wiggle: {
+                            '0%, 100%': { transform: 'rotate(-3deg)' },
+                            '50%': { transform: 'rotate(3deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #ffe4e6 0%, #fae8ff 50%, #f3e8ff 100%);
+            min-height: 100vh;
+            color: #4a044e;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fae8ff; }
+        ::-webkit-scrollbar-thumb { background: #f472b6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d946ef; }
+
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 8px 32px 0 rgba(217, 70, 239, 0.15);
+        }
+
+        .glass-card-light {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px);
+            color: #4a044e;
+            border: 1px solid rgba(255, 192, 203, 0.5);
+        }
+
+        /* Floating Hearts Canvas */
+        #heart-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Opening Screen Gift Box CSS Art */
+        .gift-box {
+            position: relative;
+            width: 140px;
+            height: 110px;
+            background: #ff4d6d;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.3);
+            transition: transform 0.3s;
+        }
+        .gift-box:hover {
+            transform: scale(1.05) translateY(-5px);
+        }
+        .gift-box::before {
+            content: '';
+            position: absolute;
+            width: 35px;
+            height: 100%;
+            background: #fff;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .gift-lid {
+            position: absolute;
+            width: 160px;
+            height: 35px;
+            background: #ff8fa3;
+            top: -35px;
+            left: -10px;
+            border-radius: 6px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 2;
+        }
+        .gift-lid::before {
+            content: '';
+            position: absolute;
+            width: 35px;
+            height: 100%;
+            background: #fff;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .gift-ribbon-left, .gift-ribbon-right {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border: 6px solid #ff8fa3;
+            border-radius: 50% 50% 0 50%;
+            top: -75px;
+            z-index: 1;
+        }
+        .gift-ribbon-left {
+            left: 20px;
+            transform: rotate(45deg);
+        }
+        .gift-ribbon-right {
+            right: 20px;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+        }
+
+        /* Flame Animation */
+        @keyframes flameGlow {
+            0%, 100% { transform: scale(1) rotate(-2deg); opacity: 0.9; filter: drop-shadow(0 0 5px #fcd34d); }
+            50% { transform: scale(1.15) rotate(2deg); opacity: 1; filter: drop-shadow(0 0 15px #fbbf24); }
+        }
+        .flame {
+            background: #fcd34d;
+            border-radius: 50% 50% 20% 20%;
+            animation: flameGlow 0.6s infinite ease-in-out;
+            transform-origin: center bottom;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            box-shadow: 0 0 15px 5px rgba(252, 211, 77, 0.6), 0 0 30px 10px rgba(245, 158, 11, 0.4) inset;
+        }
+        .flame.extinguished {
+            opacity: 0 !important;
+            transform: scale(0) translateY(-10px) !important;
+            filter: grayscale(100%);
+        }
+
+        .text-glow-pink {
+            text-shadow: 0 0 15px rgba(244, 114, 182, 0.6), 0 0 25px rgba(244, 114, 182, 0.3);
+        }
+    </style>
+</head>
+<body class="relative font-sans antialiased selection:bg-pink-400 selection:text-white">
+
+    <!-- Screen 1: Opening Gift -->
+    <div id="opening-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#fff0f3] transition-opacity duration-1000">
+        <h1 class="font-cute text-3xl sm:text-4xl text-pinkDark mb-16 text-center px-4 animate-bounce-slow font-bold">
+            Hai Marfuah! Ada paket spesial nih buat kamu 🎁
+        </h1>
+        <div class="gift-container animate-wiggle relative mt-4 mb-8" onclick="openGift()">
+            <div class="gift-ribbon-left"></div>
+            <div class="gift-ribbon-right"></div>
+            <div class="gift-lid"></div>
+            <div class="gift-box flex items-center justify-center">
+                <span class="text-white text-sm font-bold relative z-10 bg-pinkDark px-3 py-1.5 rounded-full shadow-md">Klik Aku!</span>
+            </div>
+        </div>
+        <p class="mt-12 text-pinkMain font-medium animate-pulse text-lg">Tap kado untuk membuka kejutannya!</p>
+    </div>
+
+    <!-- Background Canvas for floating hearts -->
+    <canvas id="heart-canvas"></canvas>
+
+    <!-- Floating Audio Button (Top Right) -->
+    <button id="musicToggle" onclick="toggleAudio()" class="hidden fixed top-6 right-6 z-50 bg-white/80 backdrop-blur-md text-pink-500 w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl hover:scale-110 hover:bg-pink-50 transition-all border-2 border-pink-200">
+        <i id="musicIcon" class="fa-solid fa-volume-up"></i>
+    </button>
+
+    <!-- Main Content -->
+    <main id="main-content" class="hidden relative z-10 pt-16 pb-20 px-4 sm:px-6 max-w-4xl mx-auto space-y-16">
+
+        <!-- Hero Section -->
+        <section class="text-center space-y-6 pt-6 relative">
+            <div class="absolute -top-4 left-4 text-5xl opacity-50 animate-float" style="animation-delay: 0s;">✨</div>
+            <div class="absolute top-10 right-4 text-4xl opacity-50 animate-float" style="animation-delay: 1s;">🎈</div>
+
+            <h1 class="text-5xl sm:text-7xl font-cute font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-pink-500 text-glow-pink pb-2">
+                Happy 21st Birthday <br> Marfuah Rahmawati!
+            </h1>
+
+            <div class="text-lg sm:text-xl font-medium text-pink-600 bg-white/50 inline-block px-6 py-2 rounded-full border border-pink-200 shadow-sm">
+                🎉 21 Tahun Penuh Keajaiban 🎉
+            </div>
+        </section>
+
+        <!-- Interactive Cake Section (Pink & Purple Theme) -->
+        <section class="glass-card rounded-[2.5rem] p-6 sm:p-10 text-center space-y-8 relative overflow-hidden">
+            <div class="space-y-2">
+                <h2 class="text-3xl sm:text-4xl font-cute font-bold text-pink-600">🎂 Make a Wish & Tiup Lilinnya!</h2>
+                <p class="text-sm sm:text-base font-medium text-purple-700">Klik lilinnya biar apinya mati dan make a wish yaa!</p>
+            </div>
+
+            <!-- Cake Visual -->
+            <div class="relative w-72 h-64 mx-auto flex flex-col justify-end items-center my-6 group cursor-pointer" onclick="blowCandles()">
+                
+                <!-- Candles Layer -->
+                <div id="candlesContainer" class="flex justify-center space-x-6 mb-1 z-20 transition-all duration-500 relative top-2">
+                    <!-- Candle 1 -->
+                    <div class="candle-item relative flex flex-col items-center">
+                        <div class="flame w-4 h-8 mb-1"></div>
+                        <div class="w-3 h-14 bg-gradient-to-r from-pink-300 to-pink-500 rounded-sm shadow-md border border-pink-200"></div>
+                    </div>
+                    <!-- Number 21 Candle -->
+                    <div class="candle-item relative flex flex-col items-center -mt-2">
+                        <div class="flame w-5 h-9 mb-1"></div>
+                        <div class="bg-gradient-to-br from-fuchsia-400 to-purple-500 text-white font-extrabold text-sm px-3 py-1.5 rounded-lg shadow-lg border-2 border-white transform rotate-3">
+                            21
+                        </div>
+                        <div class="w-2 h-10 bg-purple-200 rounded-sm mt-1 border border-purple-300"></div>
+                    </div>
+                    <!-- Candle 3 -->
+                    <div class="candle-item relative flex flex-col items-center">
+                        <div class="flame w-4 h-8 mb-1"></div>
+                        <div class="w-3 h-14 bg-gradient-to-r from-purple-300 to-purple-500 rounded-sm shadow-md border border-purple-200"></div>
+                    </div>
+                </div>
+
+                <!-- Pink & Purple Cake Layers -->
+                <div class="w-52 h-12 bg-gradient-to-r from-pink-300 via-pink-400 to-pink-300 rounded-t-2xl relative z-10 shadow-inner flex items-center justify-center">
+                    <div class="absolute -bottom-2 flex w-full justify-between px-1">
+                        <div class="w-8 h-6 bg-pink-400 rounded-b-full"></div>
+                        <div class="w-10 h-8 bg-pink-400 rounded-b-full"></div>
+                        <div class="w-6 h-5 bg-pink-400 rounded-b-full"></div>
+                        <div class="w-12 h-7 bg-pink-400 rounded-b-full"></div>
+                        <div class="w-8 h-6 bg-pink-400 rounded-b-full"></div>
+                    </div>
+                </div>
+                <div class="w-60 h-14 bg-gradient-to-r from-purple-400 via-fuchsia-400 to-purple-400 rounded-t-lg relative z-0 flex items-center justify-center border-b-4 border-fuchsia-500">
+                    <span class="text-white font-cursive text-xl font-bold tracking-widest drop-shadow-md">Marfuah</span>
+                </div>
+                <div class="w-64 h-16 bg-gradient-to-r from-pink-500 via-rose-400 to-pink-500 rounded-t-lg shadow-xl flex justify-around items-center px-4 border-b-4 border-pink-700">
+                    <div class="w-4 h-4 rounded-full bg-yellow-200 shadow-sm"></div>
+                    <div class="w-4 h-4 rounded-full bg-white shadow-sm"></div>
+                    <div class="w-4 h-4 rounded-full bg-purple-200 shadow-sm"></div>
+                    <div class="w-4 h-4 rounded-full bg-yellow-200 shadow-sm"></div>
+                </div>
+                <div class="w-80 h-6 bg-white/80 backdrop-blur-sm rounded-[100%] shadow-2xl border-b-4 border-gray-200 z-[-1] absolute -bottom-3"></div>
+            </div>
+
+            <div id="wishStatus" class="min-h-[60px] flex items-center justify-center">
+                <button onclick="blowCandles()" class="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white font-bold px-8 py-3.5 rounded-full shadow-lg shadow-pink-500/40 transform hover:-translate-y-1 transition-all text-sm sm:text-base border-2 border-white/50">
+                    💨 Klik Kue Buat Tiup Lilin! 💨
+                </button>
+            </div>
+        </section>
+
+        <!-- Polaroid Gallery Section -->
+        <section class="glass-card rounded-[2.5rem] p-6 sm:p-10 text-center space-y-6">
+            <div class="space-y-2 mb-8">
+                <h2 class="text-3xl sm:text-4xl font-cute font-bold text-purple-600">📸 Memori Kita Berdua</h2>
+                <p class="text-sm sm:text-base font-medium text-purple-700">Beberapa momen seru yang gak akan pernah terlupakan!</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-2">
+                <!-- Foto 1 -->
+                <div class="bg-white p-4 pb-6 rounded-lg shadow-xl transform -rotate-3 hover:rotate-0 transition-transform duration-300 hover:scale-105 border border-gray-100">
+                    <div class="aspect-square bg-gray-200 rounded mb-4 overflow-hidden">
+                        <img src="gramedia.jpeg" alt="Gramedia Grage Mall" class="w-full h-full object-cover">
+                    </div>
+                    <p class="font-cursive text-xl text-pink-600">Momen berdua di Gramedia Grage Mall Cirebon</p>
+                </div>
+                
+                <!-- Foto 2 -->
+                <div class="bg-white p-4 pb-6 rounded-lg shadow-xl transform rotate-2 hover:rotate-0 transition-transform duration-300 hover:scale-105 border border-gray-100">
+                    <div class="aspect-square bg-gray-200 rounded mb-4 overflow-hidden">
+                        <img src="fotoboot.jpeg" alt="Fotobooth" class="w-full h-full object-cover">
+                    </div>
+                    <p class="font-cursive text-xl text-pink-600">Keseruan Fotobooth kita</p>
+                </div>
+
+                <!-- Foto 3 -->
+                <div class="bg-white p-4 pb-6 rounded-lg shadow-xl transform -rotate-1 hover:rotate-0 transition-transform duration-300 hover:scale-105 border border-gray-100 sm:col-span-2 md:col-span-1 sm:w-1/2 md:w-full mx-auto">
+                    <div class="aspect-square bg-gray-200 rounded mb-4 overflow-hidden">
+                        <img src="joging.jpeg" alt="Joging" class="w-full h-full object-cover">
+                    </div>
+                    <p class="font-cursive text-xl text-pink-600">Waktu kita Joging bareng</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pesan & Kesan (Interactive Envelope) -->
+        <section class="space-y-6">
+            <div class="text-center">
+                <h2 class="text-3xl sm:text-4xl font-cute font-bold text-purple-600">💌 Surat Rahasia Dari Bestie</h2>
+            </div>
+
+            <div class="flex justify-center">
+                <div id="envelopeCard" onclick="openLetter()" class="cursor-pointer group relative w-full max-w-2xl bg-gradient-to-br from-pink-200 to-purple-200 p-8 rounded-[2.5rem] border-4 border-white text-center shadow-xl hover:shadow-pink-300/50 transition-all duration-500 transform hover:-translate-y-2">
+                    
+                    <div id="envelopeClosedUI" class="space-y-4 py-8">
+                        <div class="text-7xl text-pink-500 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 filter drop-shadow-md">
+                            <i class="fa-solid fa-envelope-heart"></i>
+                        </div>
+                        <div class="font-cursive text-3xl text-purple-700 font-bold mt-4">Pesan Spesial Untuk Marfuah</div>
+                        <div class="inline-block bg-white text-pink-600 font-bold px-4 py-1.5 rounded-full text-sm animate-pulse shadow-sm">
+                            Klik Amplopnya Buat Buka! ❤️
+                        </div>
+                    </div>
+
+                    <div id="letterContent" class="hidden space-y-6 text-left p-6 sm:p-8 glass-card-light rounded-3xl shadow-xl transition-all duration-700">
+                        <div class="flex justify-between items-center border-b-2 border-pink-200 pb-4">
+                            <span class="font-cursive text-3xl text-pink-600 font-bold">Dari Bestiemu, Siti Maefaulan</span>
+                        </div>
+
+                        <div class="space-y-4 text-base sm:text-lg leading-relaxed font-medium text-purple-900">
+                            <p>Haiiiiii <strong>Marfuah Rahmawati</strong> sayangku! 🌸</p>
+                            
+                            <p>
+                                Cieee yang sekarang udah kepala dua, eh tepatnya 21 tahun ding! Waktu cepet banget ya jalan. Perasaan baru kemaren kita kenal, ketawa bareng, curhat nangis-nangis bareng, eh sekarang kamu udah makin dewasa aja.
+                            </p>
+                            
+                            <!-- Quote Section -->
+                            <div class="bg-pink-50 border-l-4 border-pink-400 p-4 rounded-r-xl space-y-2 my-4 shadow-sm">
+                                <p class="text-pink-600 italic font-semibold text-center text-sm sm:text-base">
+                                    "Sahabat itu seperti bintang, kadang nggak keliatan, tapi kamu tau dia selalu ada di sana." ✨
+                                </p>
+                            </div>
+
+                            <p>
+                                Di umur 21 ini, doaku buat kamu: Semoga kamu selalu sehat, makin cantik luar dalam, dilancarkan rezekinya, dan semua goals/impian kamu bisa kecapai satu per satu. Jangan lupa bahagia, kurang-kurangin insecure-nya karena kamu itu <strong>keren banget!</strong>
+                            </p>
+                            
+                            <p>
+                                Makasih ya Fuah, udah jadi sahabat terbaik, pendengar yang sabar buat Siti Maefaulan. Pokoknya kita harus bestie-an terus sampe nenek-nenek!
+                            </p>
+                            
+                            <p class="font-cursive text-2xl text-pink-500 font-bold pt-6 text-right">
+                                <span class="text-lg text-purple-400 font-sans font-medium block mb-1">With so much love,</span>
+                                Siti Maefaulan 💌
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Firebase: Make a Wish (Terbangkan Harapan) Section -->
+        <section class="glass-card rounded-[2.5rem] p-6 sm:p-8 text-center space-y-6 relative border-2 border-purple-200">
+            <div class="space-y-2">
+                <h2 class="text-3xl sm:text-4xl font-cute font-bold text-purple-600">🎈 Terbangkan Harapanmu</h2>
+                <p class="text-sm sm:text-base font-medium text-purple-700">Ketik harapan di umur 21 ini, lalu terbangkan agar semua semesta (dan semua orang) bisa melihatnya!</p>
+            </div>
+
+            <div class="max-w-xl mx-auto space-y-4">
+                <div class="relative z-10">
+                    <textarea id="wishInput" rows="3" placeholder="Semoga tahun ini..." class="w-full px-5 py-4 rounded-2xl bg-white/80 border-2 border-pink-300 text-purple-900 placeholder-purple-300 text-base focus:outline-none focus:border-purple-400 focus:ring-4 focus:ring-purple-100 transition-all resize-none font-medium shadow-inner"></textarea>
+                    <div id="wishError" class="hidden text-pink-600 text-sm font-bold mt-2 text-left px-2"></div>
+                </div>
+
+                <button onclick="launchWish()" id="submitWishBtn" class="bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:from-fuchsia-600 hover:to-purple-700 text-white font-bold px-8 py-3.5 rounded-full transition-all text-base shadow-lg shadow-purple-500/30 flex items-center justify-center mx-auto gap-2 transform hover:-translate-y-1 relative z-10">
+                    <span>Terbangkan Harapan</span> <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+
+            <!-- Wish Wall Display (Firebase Data) -->
+            <div class="mt-10 pt-8 border-t-2 border-pink-200/50">
+                <h3 class="font-cute text-2xl text-pink-600 mb-6 flex items-center justify-center gap-2">
+                    <i class="fas fa-cloud text-purple-400"></i> Langit Harapan <i class="fas fa-cloud text-purple-400"></i>
+                </h3>
+                
+                <div id="wishesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-h-[400px] overflow-y-auto p-2">
+                    <div class="col-span-full text-center text-sm font-medium text-purple-400 py-4">
+                        <i class="fas fa-spinner fa-spin mr-2"></i> Sedang mengambil harapan dari database...
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center space-y-4 pt-10 pb-6 border-t-2 border-pink-200">
+            <div class="font-cursive text-3xl sm:text-4xl text-pink-500">
+                "Happy 21st Birthday, Marfuah!"
+            </div>
+            <p class="text-sm font-medium text-purple-600">
+                Dibuat dengan sepenuh hati oleh <strong class="text-pink-600 text-base">Siti Maefaulan</strong> 💖
+            </p>
+        </footer>
+
+    </main>
+
+    <!-- Flying Wish Container (Full Screen Overlay for flying balloons) -->
+    <div id="flyingZone" class="fixed inset-0 pointer-events-none z-[100] overflow-hidden hidden"></div>
+
+    <!-- Firebase Module (SUDAH DIPERBAIKI) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Konfigurasi asli kamu
+        const fbConfig = {
+            apiKey: "AIzaSyCtuzWeYZhtAKEaaGwosIpPmDFq-Iptna4",
+            authDomain: "ultah-fuah.firebaseapp.com",
+            projectId: "ultah-fuah",
+            storageBucket: "ultah-fuah.firebasestorage.app",
+            messagingSenderId: "544241350315",
+            appId: "1:544241350315:web:f4305aba9fc4b6436fe9ee",
+            measurementId: "G-QY8VXCLFEE"
+        };
+        
+        let app, db;
+
+        try {
+            app = initializeApp(fbConfig);
+            db = getFirestore(app);
+            fetchWishes(); // Jalankan listener database
+        } catch(e) {
+            console.error("Firebase init gagal:", e);
+        }
+
+        // FUNGSI ANIMASI BALON (HARUS DIDEKLARASIKAN LEBIH DULU)
+        window.createFlyingBalloon = function(text) {
+            const zone = document.getElementById('flyingZone');
+            zone.classList.remove('hidden');
+            const wrap = document.createElement('div');
+            wrap.className = 'absolute animate-fly-up flex flex-col items-center drop-shadow-xl z-[100]';
+            
+            const leftPos = Math.random() * 70 + 15; 
+            wrap.style.left = `${leftPos}%`;
+            wrap.style.bottom = '-100px';
+
+            const safeDiv = document.createElement('div');
+            safeDiv.textContent = text;
+            const shortText = safeDiv.innerHTML.length > 30 ? safeDiv.innerHTML.substring(0,30) + '...' : safeDiv.innerHTML;
+
+            wrap.innerHTML = `
+                <div class="bg-white border-2 border-pink-400 text-purple-700 text-xs font-bold py-2 px-4 rounded-full mb-2 max-w-[200px] text-center shadow-lg">
+                    ${shortText}
+                </div>
+                <div class="text-7xl filter drop-shadow-md">🎈</div>
+            `;
+            
+            zone.appendChild(wrap);
+            
+            // Hapus elemen setelah selesai terbang
+            setTimeout(() => { 
+                if(wrap.parentNode) wrap.parentNode.removeChild(wrap); 
+                if(zone.children.length === 0) zone.classList.add('hidden');
+            }, 8000); 
+        };
+
+        // FUNGSI UNTUK TOMBOL TERBANGKAN HARAPAN (DIPERBAIKI AGAR TIDAK NYANGKUT)
+        window.launchWish = function() {
+            const input = document.getElementById('wishInput');
+            const errorMsg = document.getElementById('wishError');
+            const btn = document.getElementById('submitWishBtn');
+            const text = input.value.trim();
+
+            if (!text) {
+                errorMsg.textContent = "Ketik harapanmu dulu dong! 🥺";
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+            errorMsg.classList.add('hidden');
+            
+            // Ubah tombol sebentar untuk memberi efek klik
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menerbangkan...';
+
+            // 1. LANGSUNG JALANKAN ANIMASI BALON & CONFETTI (Tanpa menunggu server)
+            if (typeof window.createFlyingBalloon === 'function') {
+                window.createFlyingBalloon(text);
+            }
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 }, colors: ['#f472b6', '#a855f7', '#ffffff']});
+            }
+
+            // Kosongkan kolom input
+            input.value = '';
+
+            // 2. KEMBALIKAN TOMBOL KE SEMULA DENGAN CEPAT
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Terbangkan Harapan</span> <i class="fa-solid fa-paper-plane"></i>';
+            }, 500);
+
+            // 3. PROSES SIMPAN KE FIREBASE (Berjalan diam-diam di background)
+            if (db) {
+                const wishesRef = collection(db, 'wishes');
+                // Perhatikan: Tidak pakai 'await', jadi kalau koneksi lambat web tidak akan freeze
+                addDoc(wishesRef, {
+                    text: text,
+                    author: 'Guest',
+                    createdAt: Date.now()
+                }).catch((error) => {
+                    console.error("Gagal simpan ke background:", error);
+                });
+            } else {
+                renderWishCard({text: text, createdAt: Date.now()}, true);
+            }
+        };
+
+        // FUNGSI MENGAMBIL & MENAMPILKAN DATA (Tidak Diubah)
+        function fetchWishes() {
+            if(!db) return;
+            const wishesRef = collection(db, 'wishes');
+            
+            onSnapshot(wishesRef, (snapshot) => {
+                const wishes = [];
+                snapshot.forEach((doc) => {
+                    wishes.push({ id: doc.id, ...doc.data() });
+                });
+                
+                wishes.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                
+                const container = document.getElementById('wishesContainer');
+                container.innerHTML = ''; 
+                
+                if (wishes.length === 0) {
+                    container.innerHTML = `<div class="col-span-full text-center text-sm font-medium text-purple-400 py-4">Belum ada harapan. Yuk jadi yang pertama!</div>`;
+                    return;
+                }
+
+                wishes.forEach((wish) => {
+                    renderWishCard(wish, false);
+                });
+            });
+        }
+
+        function renderWishCard(wish, prepend = false) {
+            const container = document.getElementById('wishesContainer');
+            const dateObj = new Date(wish.createdAt);
+            const dateStr = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+            
+            const div = document.createElement('div');
+            div.className = 'bg-white/90 p-4 rounded-2xl shadow-sm border border-pink-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group';
+            
+            const safeText = document.createElement('div');
+            safeText.textContent = wish.text;
+            
+            div.innerHTML = `
+                <div class="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-pink-400 to-purple-400"></div>
+                <div class="pl-2">
+                    <p class="text-purple-900 font-medium text-sm leading-relaxed mb-2">"${safeText.innerHTML}"</p>
+                    <div class="flex justify-between items-center text-[10px] text-pink-500 font-bold">
+                        <span><i class="fas fa-star text-yellow-400 mr-1"></i> Harapan Spesial</span>
+                        <span>${dateStr}</span>
+                    </div>
+                </div>
+            `;
+            
+            if (prepend && container.firstChild) {
+                container.insertBefore(div, container.firstChild);
+            } else {
+                container.appendChild(div);
+            }
+        }
+    </script>
+
+    <!-- General UI Logic (Kue, Animasi Kado, Musik) -->
+    <script>
+        let isCandleBlown = false;
+        let isAudioPlaying = false;
+        let synth = null;
+        let melodyPart = null;
+
+        function openGift() {
+            const openingScreen = document.getElementById('opening-screen');
+            const mainContent = document.getElementById('main-content');
+            const musicToggle = document.getElementById('musicToggle');
+            
+            confetti({
+                particleCount: 150,
+                spread: 80,
+                origin: { y: 0.6 },
+                colors: ['#ffccd5', '#ff8fa3', '#ff4d6d', '#ffffff', '#fcd34d']
+            });
+
+            openingScreen.style.opacity = '0';
+            setTimeout(() => {
+                openingScreen.style.display = 'none';
+                mainContent.classList.remove('hidden');
+                musicToggle.classList.remove('hidden');
+                
+                initHearts();
+                animateHearts();
+                toggleAudio();
+            }, 1000);
+        }
+
+        const canvas = document.getElementById('heart-canvas');
+        const ctx = canvas.getContext('2d');
+        let hearts = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Heart {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 100;
+                this.size = Math.random() * 15 + 10;
+                this.speedY = Math.random() * 1.5 + 0.5;
+                this.speedX = Math.sin(Math.random() * Math.PI) * 0.5;
+                this.opacity = Math.random() * 0.4 + 0.2;
+                this.color = `hsl(${Math.random() * 60 + 290}, 85%, 75%)`; 
+            }
+            update() {
+                this.y -= this.speedY;
+                this.x += this.speedX;
+                if (this.y < -30) {
+                    this.y = canvas.height + 30;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                const x = this.x;
+                const y = this.y;
+                const size = this.size;
+                ctx.moveTo(x, y);
+                ctx.bezierCurveTo(x - size / 2, y - size / 2, x - size, y + size / 3, x, y + size);
+                ctx.bezierCurveTo(x + size, y + size / 3, x + size / 2, y - size / 2, x, y);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function initHearts() {
+            hearts = [];
+            const count = Math.floor(window.innerWidth / 20); 
+            for (let i = 0; i < count; i++) {
+                hearts.push(new Heart());
+            }
+        }
+
+        function animateHearts() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hearts.forEach(heart => {
+                heart.update();
+                heart.draw();
+            });
+            requestAnimationFrame(animateHearts);
+        }
+
+        function blowCandles() {
+            if (isCandleBlown) return;
+            isCandleBlown = true;
+
+            const flames = document.querySelectorAll('.flame');
+            flames.forEach(flame => {
+                flame.classList.add('extinguished');
+            });
+
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 200,
+                    spread: 100,
+                    origin: { y: 0.5 },
+                    colors: ['#f472b6', '#c026d3', '#a855f7', '#fdf4ff', '#fcd34d']
+                });
+            }
+
+            const status = document.getElementById('wishStatus');
+            if (status) {
+                status.innerHTML = `
+                    <div class="p-4 bg-white/90 border-2 border-pink-300 rounded-2xl text-pink-600 font-bold text-sm sm:text-base animate-bounce shadow-lg w-full text-center">
+                        ✨ Lilin berhasil ditiup! Selamat Ulang Tahun! 🥳💖
+                    </div>
+                `;
+            }
+        }
+
+        function openLetter() {
+            const closedUI = document.getElementById('envelopeClosedUI');
+            const letter = document.getElementById('letterContent');
+
+            if (!closedUI.classList.contains('hidden')) {
+                closedUI.classList.add('hidden');
+                letter.classList.remove('hidden');
+
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 80,
+                        spread: 70,
+                        angle: 90,
+                        origin: { y: 0.6 },
+                        colors: ['#f472b6', '#a855f7']
+                    });
+                }
+            }
+        }
+
+        async function toggleAudio() {
+            const icon = document.getElementById('musicIcon');
+
+            try {
+                if (!isAudioPlaying) {
+                    await Tone.start();
+                    
+                    if (!synth) {
+                        synth = new Tone.PolySynth(Tone.Synth, {
+                            oscillator: { type: "triangle" },
+                            envelope: { attack: 0.05, decay: 0.2, sustain: 0.2, release: 1.5 }
+                        }).toDestination();
+                        synth.volume.value = -10;
+
+                        const melody = [
+                            { time: 0, note: "C4", dur: "8n" },
+                            { time: "0:0:2", note: "C4", dur: "8n" },
+                            { time: "0:1:0", note: "D4", dur: "4n" },
+                            { time: "0:2:0", note: "C4", dur: "4n" },
+                            { time: "0:3:0", note: "F4", dur: "4n" },
+                            { time: "1:0:0", note: "E4", dur: "2n" },
+                            { time: "1:2:0", note: "C4", dur: "8n" },
+                            { time: "1:2:2", note: "C4", dur: "8n" },
+                            { time: "1:3:0", note: "D4", dur: "4n" },
+                            { time: "2:0:0", note: "C4", dur: "4n" },
+                            { time: "2:1:0", note: "G4", dur: "4n" },
+                            { time: "2:2:0", note: "F4", dur: "2n" },
+                            { time: "3:0:0", note: "C4", dur: "8n" },
+                            { time: "3:0:2", note: "C4", dur: "8n" },
+                            { time: "3:1:0", note: "C5", dur: "4n" },
+                            { time: "3:2:0", note: "A4", dur: "4n" },
+                            { time: "3:3:0", note: "F4", dur: "4n" },
+                            { time: "4:0:0", note: "E4", dur: "4n" },
+                            { time: "4:1:0", note: "D4", dur: "2n" },
+                            { time: "4:3:0", note: "A#4", dur: "8n" },
+                            { time: "4:3:2", note: "A#4", dur: "8n" },
+                            { time: "5:0:0", note: "A4", dur: "4n" },
+                            { time: "5:1:0", note: "F4", dur: "4n" },
+                            { time: "5:2:0", note: "G4", dur: "4n" },
+                            { time: "5:3:0", note: "F4", dur: "2n" }
+                        ];
+
+                        melodyPart = new Tone.Part((time, value) => {
+                            synth.triggerAttackRelease(value.note, value.dur, time);
+                        }, melody);
+                        
+                        melodyPart.loop = true;
+                        melodyPart.loopEnd = "7:0:0";
+                    }
+
+                    Tone.Transport.start();
+                    melodyPart.start(0);
+                    isAudioPlaying = true;
+                    icon.className = 'fa-solid fa-volume-up';
+                    document.getElementById('musicToggle').classList.add('animate-pulse');
+                } else {
+                    Tone.Transport.stop();
+                    isAudioPlaying = false;
+                    icon.className = 'fa-solid fa-volume-mute text-gray-500';
+                    document.getElementById('musicToggle').classList.remove('animate-pulse');
+                }
+            } catch (e) {
+                console.log('Audio execution error:', e);
+            }
+        }
+    </script>
+</body>
+</html>
